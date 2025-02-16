@@ -1,25 +1,203 @@
 const express = require('express');
-const SystemControl = require('../models/SystemControl');
-
 const router = express.Router();
+const SystemControl = require('../models/SystemControl');  // Import the model for system control
 
-// Get control state
-router.get('/', async (req, res) => {
+// Fetch the current system state from the database
+router.get('/state', async (req, res) => {
   try {
-    const state = await SystemControl.findOne();
-    res.json(state);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    let systemState = await SystemControl.findOne();
+
+    if (!systemState) {
+      // If no system state exists, create a default one
+      const defaultState = new SystemControl({
+        waterMotor: false,
+        phMotorUp: false,
+        phMotorDown: false,
+        growLight: false,
+        fertilizer: false,
+        solenoid: false,
+      });
+      systemState = await defaultState.save();
+    }
+
+    res.json(systemState);  // Return the existing or newly created system state
+  } catch (error) {
+    console.error('Error fetching state:', error);
+    res.status(500).json({ success: false, message: 'Error fetching state' });
   }
 });
 
-// Update control state
-router.patch('/', async (req, res) => {
+// Toggle waterMotor (water pump)
+router.post('/waterMotor', async (req, res) => {
   try {
-    const updatedState = await SystemControl.findOneAndUpdate({}, req.body, { new: true, upsert: true });
-    res.json(updatedState);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    let currentState = await SystemControl.findOne();
+    if (!currentState) {
+      const defaultState = new SystemControl({
+        waterMotor: false,
+        phMotorUp: false,
+        phMotorDown: false,
+        growLight: false,
+        fertilizer: false,
+        solenoid: false,
+      });
+      currentState = await defaultState.save();
+    }
+
+    // Toggle the waterMotor state
+    currentState.waterMotor = !currentState.waterMotor;
+
+    // Save the updated state to the database
+    await currentState.save();
+
+    res.json({ success: true, waterMotor: currentState.waterMotor });
+  } catch (error) {
+    console.error('Error toggling water motor:', error);
+    res.status(500).json({ success: false, message: 'Error toggling water motor' });
+  }
+});
+
+// Toggle pH Up motor
+router.post('/phMotorUp', async (req, res) => {
+  try {
+    let currentState = await SystemControl.findOne();
+    if (!currentState) {
+      const defaultState = new SystemControl({
+        waterMotor: false,
+        phMotorUp: false,
+        phMotorDown: false,
+        growLight: false,
+        fertilizer: false,
+        solenoid: false,
+      });
+      currentState = await defaultState.save();
+    }
+
+    // Toggle the pHUpMotor state
+    currentState.phMotorUp = !currentState.phMotorUp;
+
+    // Save the updated state to the database
+    await currentState.save();
+
+    res.json({ success: true, phMotorUp: currentState.phMotorUp });
+  } catch (error) {
+    console.error('Error toggling pH Up motor:', error);
+    res.status(500).json({ success: false, message: 'Error toggling pH Up motor' });
+  }
+});
+
+// Toggle pH Down motor
+router.post('/phMotorDown', async (req, res) => {
+  try {
+    let currentState = await SystemControl.findOne();
+    if (!currentState) {
+      const defaultState = new SystemControl({
+        waterMotor: false,
+        phMotorUp: false,
+        phMotorDown: false,
+        growLight: false,
+        fertilizer: false,
+        solenoid: false,
+      });
+      currentState = await defaultState.save();
+    }
+
+    // Toggle the pHDownMotor state
+    currentState.phMotorDown = !currentState.phMotorDown;
+
+    // Save the updated state to the database
+    await currentState.save();
+
+    res.json({ success: true, phMotorDown: currentState.phMotorDown });
+  } catch (error) {
+    console.error('Error toggling pH Down motor:', error);
+    res.status(500).json({ success: false, message: 'Error toggling pH Down motor' });
+  }
+});
+
+// Toggle grow light
+router.post('/growLight', async (req, res) => {
+  try {
+    let currentState = await SystemControl.findOne();
+    if (!currentState) {
+      const defaultState = new SystemControl({
+        waterMotor: false,
+        phMotorUp: false,
+        phMotorDown: false,
+        growLight: false,
+        fertilizer: false,
+        solenoid: false,
+      });
+      currentState = await defaultState.save();
+    }
+
+    // Toggle the growLight state
+    currentState.growLight = !currentState.growLight;
+
+    // Save the updated state to the database
+    await currentState.save();
+
+    res.json({ success: true, growLight: currentState.growLight });
+  } catch (error) {
+    console.error('Error toggling grow light:', error);
+    res.status(500).json({ success: false, message: 'Error toggling grow light' });
+  }
+});
+
+// Toggle fertilizer
+router.post('/fertilizer', async (req, res) => {
+  try {
+    let currentState = await SystemControl.findOne();
+    if (!currentState) {
+      const defaultState = new SystemControl({
+        waterMotor: false,
+        phMotorUp: false,
+        phMotorDown: false,
+        growLight: false,
+        fertilizer: false,
+        solenoid: false,
+      });
+      currentState = await defaultState.save();
+    }
+
+    // Toggle the fertilizer state
+    currentState.fertilizer = !currentState.fertilizer;
+
+    // Save the updated state to the database
+    await currentState.save();
+
+    res.json({ success: true, fertilizer: currentState.fertilizer });
+  } catch (error) {
+    console.error('Error toggling fertilizer:', error);
+    res.status(500).json({ success: false, message: 'Error toggling fertilizer' });
+  }
+});
+
+// Toggle solenoid
+router.post('/solenoid', async (req, res) => {
+  try {
+    let currentState = await SystemControl.findOne();
+    if (!currentState) {
+      const defaultState = new SystemControl({
+        waterMotor: false,
+        phMotorUp: false,
+        phMotorDown: false,
+        growLight: false,
+        fertilizer: false,
+        solenoid: false,
+      });
+      currentState = await defaultState.save();
+    }
+
+    // Toggle the solenoid state
+    currentState.solenoid = !currentState.solenoid;
+
+    // Save the updated state to the database
+    await currentState.save();
+
+    res.json({ success: true, solenoid: currentState.solenoid });
+  } catch (error) {
+    console.error('Error toggling solenoid:', error);
+    res.status(500).json({ success: false, message: 'Error toggling solenoid' });
   }
 });
 

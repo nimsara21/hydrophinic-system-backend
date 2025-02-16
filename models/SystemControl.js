@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Define the schema for system controls
 const SystemControlSchema = new mongoose.Schema({
   waterPump: Boolean,
   pHUpMotor: Boolean,
@@ -9,4 +10,5 @@ const SystemControlSchema = new mongoose.Schema({
   solenoid: Boolean,
 });
 
+// Export the model
 module.exports = mongoose.model('SystemControl', SystemControlSchema);

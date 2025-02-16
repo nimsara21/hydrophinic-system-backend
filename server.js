@@ -1,25 +1,28 @@
+// server.js
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors'); // If needed for cross-origin requests
-const sensorRoutes = require('./routes/sensorRoutes'); // Import the routes file
+const cors = require('cors');
+const sensorRoutes = require('./routes/sensorRoutes');
+const controlRoutes = require('./routes/controlRoutes');
 
 const app = express();
 const PORT = 5000;
 
-// Middleware
+app.use(express.json()); // Middleware to parse JSON requests
 app.use(cors()); // Enable CORS (if needed)
-app.use(express.json()); // Parse JSON bodies in requests
+
+// Register the routes
+app.use('/api/control', controlRoutes); // Ensure this is correct
+app.use('/api/sensors', sensorRoutes); // Assuming you have sensor routes
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost/hydroponic', {
+mongoose.connect('mongodb://127.0.0.1/hydroponic', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
-.catch((err) => console.log(err));
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.log(err));
 
-// Use the sensor routes for any requests starting with /api/sensors
-app.use('/api/sensors', sensorRoutes);
 
 // Start the server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
