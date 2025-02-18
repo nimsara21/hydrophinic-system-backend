@@ -89,8 +89,10 @@ router.post('/phMotorUp', async (req, res) => {
 router.post('/phMotorDown', async (req, res) => {
   try {
     let currentState = await SystemControl.findOne();
+
     if (!currentState) {
-      const defaultState = new SystemControl({
+      console.log("No system state found, creating default...");
+      currentState = await SystemControl.create({
         waterMotor: false,
         phMotorUp: false,
         phMotorDown: false,
@@ -98,8 +100,9 @@ router.post('/phMotorDown', async (req, res) => {
         fertilizer: false,
         solenoid: false,
       });
-      currentState = await defaultState.save();
     }
+
+    console.log("Current pH Down Motor State BEFORE update:", currentState.phMotorDown);
 
     // Toggle the pHDownMotor state
     currentState.phMotorDown = !currentState.phMotorDown;
@@ -107,12 +110,15 @@ router.post('/phMotorDown', async (req, res) => {
     // Save the updated state to the database
     await currentState.save();
 
+    console.log("Updated pH Down Motor State AFTER update:", currentState.phMotorDown);
+
     res.json({ success: true, phMotorDown: currentState.phMotorDown });
   } catch (error) {
     console.error('Error toggling pH Down motor:', error);
     res.status(500).json({ success: false, message: 'Error toggling pH Down motor' });
   }
 });
+
 
 // Toggle grow light
 router.post('/growLight', async (req, res) => {
@@ -129,6 +135,8 @@ router.post('/growLight', async (req, res) => {
       });
       currentState = await defaultState.save();
     }
+
+    
 
     // Toggle the growLight state
     currentState.growLight = !currentState.growLight;
