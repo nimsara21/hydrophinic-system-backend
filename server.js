@@ -1,28 +1,24 @@
-// server.js
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const sensorRoutes = require('./routes/sensorRoutes');
-const controlRoutes = require('./routes/controlRoutes');
+const bodyParser = require('body-parser');
+const admin = require('firebase-admin');
+const serviceAccount = require('./path/to/serviceAccountKey.json'); // Path to your Firebase service account key
 
+// Initialize Firebase
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://hydroponic-system-fa9cc-default-rtdb.asia-southeast1.firebasedatabase.app" // Replace with your database URL
+});
+
+// Create Express app
 const app = express();
-const PORT = 5000;
+app.use(bodyParser.json());
 
-app.use(express.json()); // Middleware to parse JSON requests
-app.use(cors()); // Enable CORS (if needed)
-
-// Register the routes
-app.use('/api/control', controlRoutes); // Ensure this is correct
-app.use('/api/sensors', sensorRoutes); // Assuming you have sensor routes
-
-// MongoDB connection
-mongoose.connect('mongodb://127.0.0.1/hydroponic', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => console.log('MongoDB connected'))
-  .catch((err) => console.log(err));
-
+// Control routes
+const controlRouter = require('./routes/control');
+app.use('/api/control', controlRouter);
 
 // Start the server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

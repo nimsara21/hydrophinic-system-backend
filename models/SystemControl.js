@@ -8,6 +8,7 @@ const SystemControlSchema = new mongoose.Schema({
   growLight: Boolean,
   fertilizer: Boolean,
   solenoid: Boolean,
+  growLightTimer: { type: Number, default: 0 }, // Timer in seconds
 });
 
 // Export the model
